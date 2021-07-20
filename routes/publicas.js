@@ -1,20 +1,23 @@
-const express = require('express')
+import express from "express";
+import path from "path";
+import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+import pool from "../data/connection.js";
+
+dotenv.config();
 const router = express.Router()
-const mysql = require('mysql')
-const path = require('path')
-const nodemailer = require('nodemailer')
 
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    service: process.env.SERVICE,
     auth:{
-        user: 'jj7594217@gmail.com',
-        pass: 'Password01jj7594217'
+        user: process.env.USER_EMAIL,
+        pass: process.env.PASSWORD_EMAIL
     }
 })
 
 function enviarCorreoBienvenida(email,nombre){
     const opciones = {
-        from : 'jj7594217@gmail.com',
+        from : process.env.USER_EMAIL,
         to : email,
         subject : 'Bienvenido al blog e viaje',
         text: `Te damos la bienvenida ${nombre}`
@@ -27,14 +30,6 @@ function enviarCorreoBienvenida(email,nombre){
         }
     })
 }
-
-const pool = mysql.createPool({
-    connectionLimit: 20,
-    host: 'localhost',
-    user: 'root',
-    password: 'Jhoncar12345',
-    database: 'blog_viajes'
-});
 
 router.get('/', (req, res) => {
     pool.getConnection(function (err, connection) {
@@ -237,4 +232,4 @@ router.get('/publicacion/:id/votar',(req,res)=>{
     })
 })
 
-module.exports = router
+export default router;
